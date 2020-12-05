@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "405187202394",
+    "project_id": "eshopreal-62768",
+    "storage_bucket": "eshopreal-62768.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405187202394:android:8e26a7c22b377963c07763",
+        "android_client_info": {
+          "package_name": "com.vima.eshop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405187202394-ar524g0o58ohbpjpde57hcla29r06nn3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCayvHcWohrQwXOwkEetO3Hh1cDkw0BEWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "405187202394-ar524g0o58ohbpjpde57hcla29r06nn3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
