@@ -19,9 +19,134 @@ class UploadPage extends StatefulWidget
 class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMixin<UploadPage>
 {
   bool get wantKeepAlive => true;
+  File file;
 
   @override
   Widget build(BuildContext context) {
-    return Text("");
+    return displayAdminHomeScreen();
   }
+
+  displayAdminHomeScreen(){
+    return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.pink , Colors.lightGreenAccent],
+                  begin: const FractionalOffset(0.0,0.0),
+                  end: const FractionalOffset(1.0,0.0),
+                  stops: [0.0,1.0],
+                  tileMode: TileMode.clamp
+              )
+          ),
+        ),
+         leading: IconButton(
+           icon: Icon(Icons.border_color,color: Colors.white,),
+           onPressed: () {
+             Route route = MaterialPageRoute(builder: (c) => AdminShiftOrders());
+             Navigator.pushReplacement(context, route);
+             },
+         ),
+        actions: [
+          FlatButton(
+            child: Text("Logout",style: TextStyle(color: Colors.pink,fontWeight: FontWeight.bold,fontSize: 16.0),),
+            onPressed: ()
+            {
+              Route route = MaterialPageRoute(builder: (c) => SplashScreen());
+              Navigator.pushReplacement(context, route);
+            },
+          )
+        ],
+
+      ),
+
+      body: getAdminHomeScreenBody(),
+    );
+  }
+
+  getAdminHomeScreenBody()
+  {
+    return Container(
+      decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.pink , Colors.lightGreenAccent],
+              begin: const FractionalOffset(0.0,0.0),
+              end: const FractionalOffset(1.0,0.0),
+              stops: [0.0,1.0],
+              tileMode: TileMode.clamp
+          )
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.shop_two,color: Colors.white,size: 200.0,),
+            Padding(
+              padding: EdgeInsets.only(top: 20.0),
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9.0)),
+                child: Text('Add New Items',style: TextStyle(color: Colors.white,fontSize: 20.0),),
+                color: Colors.green,
+                onPressed: () => takeImage(context),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  takeImage(mContext)
+  {
+    return showDialog(
+        context: mContext,
+       builder: (con)
+       {
+          return SimpleDialog(
+            title: Text("Item Image",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold),),
+            children: [
+            SimpleDialogOption(
+              child: Text('Capture with Camera',style: TextStyle(color: Colors.green,),),
+              onPressed: capturePhotoWithCamera,
+            ),
+
+              SimpleDialogOption(
+                child: Text('Select from Gallery',style: TextStyle(color: Colors.green,),),
+                onPressed: pickPhotoFromGallery,
+              ),
+              SimpleDialogOption(
+                child: Text('Cancel',style: TextStyle(color: Colors.green,),),
+                onPressed: ()
+                {
+                  Navigator.pop(context);
+                },
+              )
+
+            ],
+          );
+
+
+       }
+    );
+  }
+
+  capturePhotoWithCamera()async
+  {
+    Navigator.pop(context);
+    File imageFile =  await ImagePicker.pickImage(source:ImageSource.camera , maxHeight: 680.0 , maxWidth: 970.0);
+    setState(() {
+      file = imageFile;
+    });
+
+  }
+
+  pickPhotoFromGallery()async
+  {
+    Navigator.pop(context);
+    File imageFile =  await ImagePicker.pickImage(source:ImageSource.gallery );
+    setState(() {
+      file = imageFile;
+    });
+  }
+
 }
