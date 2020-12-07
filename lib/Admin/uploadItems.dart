@@ -178,7 +178,7 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
         actions: [
           FlatButton(
             child: Text('Add',style: TextStyle(color: Colors.pink,fontSize: 16.0,fontWeight: FontWeight.bold),),
-            onPressed: () =>('Clicked'),
+            onPressed:uploading ? null :  () => uploadImageAndSaveItemInfo(),
           )
         ],
       ),
@@ -290,4 +290,49 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
     });
 
   }
+
+  uploadImageAndSaveItemInfo()async
+  {
+     setState(() {
+       uploading = true;
+     });
+    String imageDownloadUrl = await uploadItemImage(file);
+
+    saveItemInfo(imageDownloadUrl);
+  }
+
+ Future<String>uploadItemImage(mFileImage)async
+  {
+    final StorageReference storageReference = FirebaseStorage.instance.ref().child("Items");
+    StorageUploadTask  uploadTask = storageReference.child("product_$productId.jpg").putFile(mFileImage);
+    StorageTaskSnapshot  taskSnapshot = await uploadTask.onComplete;
+    String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+    return downloadUrl;
+  }
+
+  saveItemInfo(String downloadUrl)
+  {
+    final itemsRef = Firestore.instance.collection("items");
+    itemsRef.document(productId).setData({
+     "shortInfo" : _shortInfoTextEditingController.text.trim(),
+      "longDescription" : _descriptionTextEditingController.text.trim(),
+      "price" : _priceTextEditingController.text.trim(),
+      "publishedDate" : DateTime.now(),
+      "status" : "available",
+      "thumbnailUrl" : downloadUrl,
+      "title" : _titleTextEditingController.text.trim(),
+    });
+
+    setState(() {
+      file = null;
+      uploading = false;
+      productId = DateTime.now().millisecondsSinceEpoch.toString();
+      _descriptionTextEditingController.clear();
+      _titleTextEditingController.clear();
+      _shortInfoTextEditingController.clear();
+      _priceTextEditingController.clear();
+    });
+
+  }
+
 }
