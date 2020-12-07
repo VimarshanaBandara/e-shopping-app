@@ -20,10 +20,16 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
 {
   bool get wantKeepAlive => true;
   File file;
+  TextEditingController _descriptionTextEditingController = TextEditingController();
+  TextEditingController _priceTextEditingController = TextEditingController();
+  TextEditingController _titleTextEditingController = TextEditingController();
+  TextEditingController _shortInfoTextEditingController = TextEditingController();
+  String productId = DateTime.now().millisecondsSinceEpoch.toString();
+  bool uploading = false;
 
   @override
   Widget build(BuildContext context) {
-    return displayAdminHomeScreen();
+    return file == null ?  displayAdminHomeScreen() : displayAdminUploadHomeScreen() ;
   }
 
   displayAdminHomeScreen(){
@@ -149,4 +155,139 @@ class _UploadPageState extends State<UploadPage> with AutomaticKeepAliveClientMi
     });
   }
 
+  displayAdminUploadHomeScreen()
+  {
+    return Scaffold(
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  colors: [Colors.pink , Colors.lightGreenAccent],
+                  begin: const FractionalOffset(0.0,0.0),
+                  end: const FractionalOffset(1.0,0.0),
+                  stops: [0.0,1.0],
+                  tileMode: TileMode.clamp
+              )
+          ),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back,color: Colors.white,),
+          onPressed: clearFormInfo ,
+        ),
+        title: Text('New Product',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 24.0),),
+        actions: [
+          FlatButton(
+            child: Text('Add',style: TextStyle(color: Colors.pink,fontSize: 16.0,fontWeight: FontWeight.bold),),
+            onPressed: () =>('Clicked'),
+          )
+        ],
+      ),
+      body: ListView(
+         children: [
+           uploading ? linearProgress() : Text(""),
+           Container(
+             height: 230.0,
+             width: MediaQuery.of(context).size.width * 0.8,
+             child: Center(
+               child: AspectRatio(
+                 aspectRatio: 16/9,
+                 child: Container(
+                   decoration: BoxDecoration(
+                     image: DecorationImage(
+                       image: FileImage(file),fit: BoxFit.cover
+                     )
+                   ),
+                 ),
+               ),
+             ),
+           ),
+           Padding(
+             padding: EdgeInsets.only(top: 12.0),
+           ),
+           ListTile(
+             leading: Icon(Icons.perm_device_information,color: Colors.pink,),
+             title: Container(
+               width: 250.0,
+               child:TextField(
+                 style: TextStyle(color: Colors.deepPurpleAccent),
+                 controller: _shortInfoTextEditingController,
+                 decoration: InputDecoration(
+                   hintText: 'Short Info',
+                   hintStyle: TextStyle(color: Colors.deepPurpleAccent),
+                   border: InputBorder.none
+                 ),
+               ),
+             ),
+           ),
+           Divider(color: Colors.pink,),
+
+           ListTile(
+             leading: Icon(Icons.perm_device_information,color: Colors.pink,),
+             title: Container(
+               width: 250.0,
+               child:TextField(
+                 style: TextStyle(color: Colors.deepPurpleAccent),
+                 controller: _titleTextEditingController,
+                 decoration: InputDecoration(
+                     hintText: 'Title',
+                     hintStyle: TextStyle(color: Colors.deepPurpleAccent),
+                     border: InputBorder.none
+                 ),
+               ),
+             ),
+           ),
+           Divider(color: Colors.pink,),
+
+           ListTile(
+             leading: Icon(Icons.perm_device_information,color: Colors.pink,),
+             title: Container(
+               width: 250.0,
+               child:TextField(
+                 style: TextStyle(color: Colors.deepPurpleAccent),
+                 controller: _descriptionTextEditingController,
+                 decoration: InputDecoration(
+                     hintText: 'Description',
+                     hintStyle: TextStyle(color: Colors.deepPurpleAccent),
+                     border: InputBorder.none
+                 ),
+               ),
+             ),
+           ),
+           Divider(color: Colors.pink,),
+
+           ListTile(
+             leading: Icon(Icons.perm_device_information,color: Colors.pink,),
+             title: Container(
+               width: 250.0,
+               child:TextField(
+                 keyboardType: TextInputType.number,
+                 style: TextStyle(color: Colors.deepPurpleAccent),
+                 controller: _priceTextEditingController,
+                 decoration: InputDecoration(
+                     hintText: 'Price',
+                     hintStyle: TextStyle(color: Colors.deepPurpleAccent),
+                     border: InputBorder.none
+                 ),
+               ),
+             ),
+           ),
+           Divider(color: Colors.pink,),
+
+         ],
+      ),
+    );
+  }
+
+  clearFormInfo()
+  {
+
+    setState(() {
+      file =null;
+      _descriptionTextEditingController.clear();
+      _priceTextEditingController.clear();
+      _shortInfoTextEditingController.clear();
+      _titleTextEditingController.clear();
+    });
+
+  }
 }
