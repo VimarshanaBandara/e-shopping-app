@@ -1,3 +1,5 @@
+
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shop/Store/cart.dart';
 import 'package:e_shop/Store/product_page.dart';
@@ -119,11 +121,17 @@ class _StoreHomeState extends State<StoreHome> {
 Widget sourceInfo(ItemModel model, BuildContext context,
     {Color background, removeCartFunction}) {
   return InkWell(
+    onTap: ()
+    {
+      Route route = MaterialPageRoute(builder: (c) =>ProductPage(itemModel : model));
+      Navigator.pushReplacement(context, route);
+    },
+
     splashColor: Colors.pink,
     child: Padding(
       padding: EdgeInsets.all(6.0),
       child: Container(
-        height: 90.0,
+        height: 190.0,
         width: width,
         child: Row(
           children: [
@@ -158,7 +166,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                       ],
                     ),
                   ),
-                  SizedBox(height: 20.0,),
+                   SizedBox(height: 20.0,),
                    Row(
                      children: [
                        Container(
@@ -187,7 +195,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                              padding: EdgeInsets.only(top:0.0),
                              child: Row(
                                children: [
-                                 Text(r"Original Price :€",style: TextStyle(fontSize: 14.0,color: Colors.grey,decoration: TextDecoration.lineThrough ),),
+                                 Text(r"Original Price :€ ",style: TextStyle(fontSize: 14.0,color: Colors.grey,decoration: TextDecoration.lineThrough ),),
                                  Text((model.price+model.price).toString(),style: TextStyle(fontSize: 15.0,color: Colors.grey ,decoration: TextDecoration.lineThrough),),
                                ],
                              ),
@@ -197,7 +205,7 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                              child: Row(
                                children: [
                                  Text(r"New Price :",style: TextStyle(fontSize: 14.0,color: Colors.grey),),
-                                 Text("€",style: TextStyle(color: Colors.red,fontSize: 16.0),),
+                                 Text("€ ",style: TextStyle(color: Colors.red,fontSize: 16.0),),
                                  Text((model.price).toString(),style: TextStyle(fontSize: 15.0,color: Colors.grey),),
                                ],
                              ),
@@ -212,7 +220,23 @@ Widget sourceInfo(ItemModel model, BuildContext context,
                     child: Container(),
                   ),
                   // to implement the cart item remove feature
-
+                  Align(
+                    alignment: Alignment.centerRight,
+                     child: removeCartFunction == null
+                      ? IconButton(
+                       icon:Icon(Icons.add_shopping_cart ,color: Colors.pinkAccent,) ,
+                       onPressed: ()
+                       {
+                         checkItemInCart(model.shortInfo, context);
+                       },
+                     ) : IconButton(
+                       icon:Icon(Icons.delete ,color: Colors.pinkAccent,) ,
+                     )
+                  ),
+                  Divider(
+                    height: 5.0,
+                    color: Colors.pink,
+                  )
 
                 ],
               ),
@@ -233,6 +257,25 @@ Widget card({Color primaryColor = Colors.redAccent, String imgPath}) {
 
 
 
-void checkItemInCart(String productID, BuildContext context)
+void checkItemInCart(String shortInfoAsID, BuildContext context)
 {
+  EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList).contains(shortInfoAsID)
+  ?Fluttertoast.showToast(msg : "Item is already in cart")
+      : addItemToCart(shortInfoAsID , context);
+}
+
+addItemToCart(String shortInfoAsID , BuildContext context)
+{
+   List tempCartList = EcommerceApp.sharedPreferences.getStringList(EcommerceApp.userCartList);
+   tempCartList.add(shortInfoAsID);
+
+   EcommerceApp.firestore.collection(EcommerceApp.collectionUser)
+   .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+   .updateData({
+     EcommerceApp.userCartList  : tempCartList ,
+   }).then((v){
+     Fluttertoast.showToast(msg: "Item Added Cart, Successfully");
+     EcommerceApp.sharedPreferences.setStringList(EcommerceApp.userCartList , tempCartList );
+     Provider.of<CartItemCounter>(context , listen : false).displayResult();
+   });
 }
