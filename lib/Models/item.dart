@@ -16,7 +16,7 @@ class ItemModel {
         this.thumbnailUrl,
         this.longDescription,
         this.status,
-        });
+      });
 
   ItemModel.fromJson(Map<String, dynamic> json) {
     title = json['title'];
