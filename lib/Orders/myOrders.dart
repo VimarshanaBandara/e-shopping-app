@@ -16,7 +16,73 @@ class _MyOrdersState extends State<MyOrders> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(),
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.pink , Colors.lightGreenAccent],
+                    begin: const FractionalOffset(0.0,0.0),
+                    end: const FractionalOffset(1.0,0.0),
+                    stops: [0.0,1.0],
+                    tileMode: TileMode.clamp
+                )
+            ),
+          ),
+          centerTitle: true,
+          title: Text('Oy Orders',style: TextStyle(color: Colors.white),),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.arrow_drop_down_circle,color: Colors.white,),
+              onPressed: ()
+              {
+                SystemNavigator.pop();
+              },
+            )
+          ],
+        ),
+        body: StreamBuilder<QuerySnapshot>(
+          stream: EcommerceApp.firestore
+              .collection(EcommerceApp.collectionUser)
+          .document(EcommerceApp.sharedPreferences.getString(EcommerceApp.userUID))
+          .collection(EcommerceApp.collectionOrders).snapshots(),
+
+          builder: (c , snapshot)
+          {
+            return snapshot.hasData
+                ? ListView.builder(
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (c , index) {
+                return FutureBuilder<QuerySnapshot>(
+
+                  future: Firestore.instance
+                      .collection("items")
+                      .where("shortInfo" , whereIn:snapshot.data.documents[index].data[EcommerceApp.productID])
+                      .getDocuments(),
+
+                  builder: (c , snap)
+                  {
+                    return snap.hasData
+                        ? OrderCard(
+
+                      itemCount: snap.data.documents.length,
+                      data: snap.data.documents,
+                      orderId: snapshot.data.documents[index].documentID,
+                    )
+                        :Center(child: circularProgress() ,);
+                  },
+
+
+
+                );
+              },
+            )
+                :Center(child: circularProgress(),);
+                
+          },
+        ),
+      ),
     );
   }
 }
