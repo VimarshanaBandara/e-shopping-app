@@ -162,9 +162,9 @@ class StatusBanner extends StatelessWidget {
             ),
           ),
         ),
-          SizedBox(height: 20.0,),
-          Text("Order Placed Successful" ,style: TextStyle(color: Colors.white),),
-          SizedBox(height:5.0,),
+          SizedBox(width: 20.0,),
+          Text("Order Placed "+ msg ,style: TextStyle(color: Colors.white),),
+          SizedBox(width:5.0,),
           CircleAvatar(
             radius: 8.0,
             backgroundColor: Colors.grey,
